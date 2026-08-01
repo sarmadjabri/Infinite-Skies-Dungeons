@@ -46,8 +46,7 @@ public final class MossboundBruteBehavior implements MobBehavior {
         if (target == null) return;
         golem.setTarget(target); // Prevent vanilla hostile-mob prioritisation.
 
-        if (nextThrowTick.getOrDefault(golem.getUniqueId(), 0L) > tick
-                || golem.getLocation().distanceSquared(target.getLocation()) < 25.0) return;
+        if (nextThrowTick.getOrDefault(golem.getUniqueId(), 0L) > tick) return;
         nextThrowTick.put(golem.getUniqueId(), tick + BLOCK_THROW_COOLDOWN_TICKS);
         launchBlock(golem, target, tick);
     }
@@ -57,7 +56,8 @@ public final class MossboundBruteBehavior implements MobBehavior {
         Item projectile = golem.getWorld().dropItem(origin, ItemStack.of(Material.MOSS_BLOCK));
         projectile.setPickupDelay(Integer.MAX_VALUE);
         projectile.setGravity(false);
-        projectile.setVelocity(target.getEyeLocation().toVector().subtract(origin.toVector()).normalize().multiply(1.05));
+        Location torso = target.getLocation().clone().add(0, 0.9, 0);
+        projectile.setVelocity(torso.toVector().subtract(origin.toVector()).normalize().multiply(1.05));
         flyingBlocks.put(projectile.getUniqueId(), new FlyingBlock(projectile, target.getUniqueId(), tick + PROJECTILE_LIFETIME_TICKS));
         golem.getWorld().playSound(origin, Sound.ENTITY_SNOWBALL_THROW, 1F, .65F);
     }
@@ -67,7 +67,8 @@ public final class MossboundBruteBehavior implements MobBehavior {
             Item projectile = block.projectile();
             if (!projectile.isValid() || tick >= block.expireTick() || !projectile.getLocation().getBlock().isPassable()) { projectile.remove(); flyingBlocks.remove(projectile.getUniqueId()); continue; }
             projectile.getWorld().spawnParticle(Particle.BLOCK, projectile.getLocation(), 80, .6, .6, .6, Material.MOSS_BLOCK.createBlockData());
-            for (Player player : projectile.getWorld().getPlayers()) if (!player.isDead() && player.getLocation().distanceSquared(projectile.getLocation()) <= 2.25) {
+            for (Player player : projectile.getWorld().getPlayers()) if (!player.isDead()
+                    && player.getBoundingBox().expand(.55).contains(projectile.getLocation().toVector())) {
                 ControlledDamage.apply(projectile, player, BLOCK_THROW_DAMAGE);
                 player.setVelocity(player.getLocation().toVector().subtract(projectile.getLocation().toVector()).normalize().multiply(.65).setY(.22));
                 projectile.getWorld().spawnParticle(Particle.BLOCK, projectile.getLocation(), 20, .3, .3, .3, Material.MOSS_BLOCK.createBlockData());

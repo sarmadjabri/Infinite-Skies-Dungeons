@@ -1,7 +1,7 @@
 name: InfiniteSkiesDungeons
 version: '${version}'
 main: dev.sarmy.infiniteskies.dungeons.InfiniteSkiesDungeonsPlugin
-api-version: '1.21'
+api-version: '26.2'
 description: Extensible custom mobs, dungeon encounters, and bosses for Infinite Skies.
 authors: [sarmy]
 commands:
@@ -23,4 +23,3 @@ permissions:
     default: op
   infiniteskiesdungeons.command.debug:
     default: op
-

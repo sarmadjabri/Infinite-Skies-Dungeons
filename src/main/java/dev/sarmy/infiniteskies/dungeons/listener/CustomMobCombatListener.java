@@ -4,6 +4,7 @@ import dev.sarmy.infiniteskies.dungeons.mob.CustomMobManager;
 import dev.sarmy.infiniteskies.dungeons.mob.behavior.SkyReaverBehavior;
 import dev.sarmy.infiniteskies.dungeons.mob.behavior.CrumblingHuskBehavior;
 import dev.sarmy.infiniteskies.dungeons.mob.behavior.RuinCrawlerBehavior;
+import dev.sarmy.infiniteskies.dungeons.mob.behavior.MossboundBruteBehavior;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
@@ -11,6 +12,7 @@ import org.bukkit.potion.PotionEffectType;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityTargetLivingEntityEvent;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -28,6 +30,11 @@ public final class CustomMobCombatListener implements Listener {
     public void onDamage(EntityDamageByEntityEvent event) {
         if (!(event.getDamager() instanceof LivingEntity attacker)) return;
         var instance = mobs.instance(attacker.getUniqueId());
+        if (instance.isPresent() && instance.get().definition().id().equals(MossboundBruteBehavior.ID)
+                && !(event.getEntity() instanceof Player)) {
+            event.setCancelled(true);
+            return;
+        }
         if (instance.isPresent() && instance.get().definition().id().equals(RuinCrawlerBehavior.ID)
                 && event.getEntity() instanceof Player player) {
             event.setDamage(4.0);
@@ -42,5 +49,15 @@ public final class CustomMobCombatListener implements Listener {
         if (now < readyAt) { event.setCancelled(true); return; }
         event.setDamage(SkyReaverBehavior.SWOOP_DAMAGE);
         nextSkyReaverHitMillis.put(attacker.getUniqueId(), now + SkyReaverBehavior.SWOOP_COOLDOWN_TICKS * 50L);
+    }
+
+    @EventHandler(ignoreCancelled = true)
+    public void onTarget(EntityTargetLivingEntityEvent event) {
+        if (!(event.getEntity() instanceof LivingEntity attacker)) return;
+        var instance = mobs.instance(attacker.getUniqueId());
+        if (instance.isPresent() && instance.get().definition().id().equals(MossboundBruteBehavior.ID)
+                && !(event.getTarget() instanceof Player)) {
+            event.setCancelled(true);
+        }
     }
 }
