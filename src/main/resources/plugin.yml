@@ -1,0 +1,26 @@
+name: InfiniteSkiesDungeons
+version: '${version}'
+main: dev.sarmy.infiniteskies.dungeons.InfiniteSkiesDungeonsPlugin
+api-version: '1.21'
+description: Extensible custom mobs, dungeon encounters, and bosses for Infinite Skies.
+authors: [sarmy]
+commands:
+  isdungeon:
+    description: Infinite Skies Dungeons administration command.
+    usage: /isdungeon help
+    permission: infiniteskiesdungeons.admin
+permissions:
+  infiniteskiesdungeons.admin:
+    description: Grants all Infinite Skies Dungeons administration commands.
+    default: op
+  infiniteskiesdungeons.command.reload:
+    default: op
+  infiniteskiesdungeons.command.mob:
+    default: op
+  infiniteskiesdungeons.command.boss:
+    default: op
+  infiniteskiesdungeons.command.dungeon:
+    default: op
+  infiniteskiesdungeons.command.debug:
+    default: op
+

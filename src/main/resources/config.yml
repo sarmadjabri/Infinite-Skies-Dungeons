@@ -1,0 +1,22 @@
+config-version: 1
+debug:
+  enabled: false
+  log-state-transitions: false
+ticks:
+  mob-interval: 5
+  boss-interval: 1
+limits:
+  managed-mobs-per-world: 200
+  particles-per-ability-per-tick: 80
+  ordinary-mob-activation-distance: 48.0
+  boss-participant-distance: 64.0
+encounters:
+  reset-after-restart: true
+  custom-mobs-may-leave-regions: false
+  bosses-regenerate-without-participants: false
+combat:
+  default-difficulty-scaling: 1.0
+  friendly-fire: false
+rewards:
+  execute-commands: true
+
