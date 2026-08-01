@@ -10,6 +10,11 @@ weapons/equipment, and important behavioral constraints have been approved.
   drop chance. This rule applies to all current and future monster definitions
   unless the user explicitly overrides it.
 
+## Global combat rule
+
+- Every custom monster has full knockback resistance and must not be displaced
+  by player attacks unless the user explicitly overrides this for a mob.
+
 ## Crumbling Husk
 
 - **Vanilla controller:** Husk.

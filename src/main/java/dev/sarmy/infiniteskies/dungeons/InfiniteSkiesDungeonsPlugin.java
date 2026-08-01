@@ -27,6 +27,7 @@ import dev.sarmy.infiniteskies.dungeons.mob.behavior.EmberWispBehavior;
 import dev.sarmy.infiniteskies.dungeons.mob.behavior.StormWispBehavior;
 import dev.sarmy.infiniteskies.dungeons.mob.behavior.FrostWispBehavior;
 import dev.sarmy.infiniteskies.dungeons.mob.behavior.RiftMineBehavior;
+import dev.sarmy.infiniteskies.dungeons.mob.behavior.ShardSlingerBehavior;
 import dev.sarmy.infiniteskies.dungeons.listener.CustomMobSpawnListener;
 import dev.sarmy.infiniteskies.dungeons.listener.CustomMobCombatListener;
 import dev.sarmy.infiniteskies.dungeons.persistence.PersistentKeys;
@@ -74,6 +75,7 @@ public final class InfiniteSkiesDungeonsPlugin extends JavaPlugin {
         mobManager.register(new StormWispBehavior());
         mobManager.register(new FrostWispBehavior());
         mobManager.register(new RiftMineBehavior());
+        mobManager.register(new ShardSlingerBehavior(projectileService));
         eggService = new CustomMobEggService(persistentKeys);
         tickService = new CentralTickService(this);
         tickService.register(projectileService);

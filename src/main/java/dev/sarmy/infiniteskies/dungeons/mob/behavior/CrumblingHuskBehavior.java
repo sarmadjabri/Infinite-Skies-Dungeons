@@ -12,7 +12,7 @@ import org.bukkit.Material;
 public final class CrumblingHuskBehavior implements MobBehavior {
     public static final String ID = "crumbling_husk";
     public static final double HEALTH = 50.0;
-    public static final double MELEE_DAMAGE = 5.0;
+    public static final double MELEE_DAMAGE = 7.0;
     public static final int ATTACK_COOLDOWN_TICKS = 60;
     public static final double MOVEMENT_SPEED = 0.2185;
 
