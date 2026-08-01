@@ -72,7 +72,7 @@ weapons/equipment, and important behavioral constraints have been approved.
 - **Health:** 40 HP.
 - **Projectile damage:** 10 HP.
 - **Projectile cooldown:** 5 seconds (100 server ticks).
-- **Movement speed:** the normal Iron Golem base speed.
+- **Movement speed:** 50% of the normal Iron Golem base speed.
 - **Armor/equipment:** no armor.
 - **Melee damage:** 17 HP.
 

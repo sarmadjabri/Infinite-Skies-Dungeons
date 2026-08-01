@@ -77,7 +77,8 @@ public final class CustomMobCombatListener implements Listener {
     @EventHandler
     public void onDeath(EntityDeathEvent event) {
         var instance = mobs.instance(event.getEntity().getUniqueId());
-        if (instance.isPresent() && instance.get().definition().id().equals(MossboundBruteBehavior.ID)) {
+        boolean mossboundBrute = mobs.mobId(event.getEntity()).map(MossboundBruteBehavior.ID::equals).orElse(false);
+        if (mossboundBrute) {
             event.getDrops().clear();
             event.setDroppedExp(0);
         }

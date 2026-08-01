@@ -85,6 +85,11 @@ public final class CustomMobManager {
         return entity.getPersistentDataContainer().has(keys.mobId(), PersistentDataType.STRING);
     }
 
+    /** Returns the authoritative persistent custom-mob identifier, including after a server restart. */
+    public Optional<String> mobId(LivingEntity entity) {
+        return Optional.ofNullable(entity.getPersistentDataContainer().get(keys.mobId(), PersistentDataType.STRING));
+    }
+
     /** Updates active, loaded custom entities; unloaded entities keep only PDC identity. */
     public void tick(long tick) {
         for (CustomMobInstance instance : List.copyOf(instances.values())) {

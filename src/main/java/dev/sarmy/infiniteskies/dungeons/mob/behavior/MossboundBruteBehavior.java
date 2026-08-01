@@ -38,7 +38,7 @@ public final class MossboundBruteBehavior implements MobBehavior {
 
     @Override public CustomMobDefinition definition() {
         return new CustomMobDefinition(ID, "Mossbound Brute", EntityType.IRON_GOLEM,
-                MobRank.NORMAL, HEALTH, MELEE_DAMAGE, 0.25);
+                MobRank.NORMAL, HEALTH, MELEE_DAMAGE, 0.125);
     }
 
     @Override public void applyEquipment(LivingEntity entity) { entity.setAI(true); }
