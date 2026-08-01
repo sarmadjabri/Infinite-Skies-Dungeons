@@ -6,6 +6,7 @@ import dev.sarmy.infiniteskies.dungeons.command.IsDungeonCommand;
 import dev.sarmy.infiniteskies.dungeons.mob.behavior.MossboundBruteBehavior;
 import dev.sarmy.infiniteskies.dungeons.mob.behavior.CrumblingHuskBehavior;
 import dev.sarmy.infiniteskies.dungeons.mob.behavior.RiftArcherBehavior;
+import dev.sarmy.infiniteskies.dungeons.mob.behavior.RuinCrawlerBehavior;
 import dev.sarmy.infiniteskies.dungeons.mob.behavior.RuinColossusBehavior;
 import dev.sarmy.infiniteskies.dungeons.mob.behavior.SkyReaverBehavior;
 import dev.sarmy.infiniteskies.dungeons.mob.behavior.StormCallerBehavior;
@@ -27,8 +28,10 @@ import dev.sarmy.infiniteskies.dungeons.mob.behavior.StormWispBehavior;
 import dev.sarmy.infiniteskies.dungeons.mob.behavior.FrostWispBehavior;
 import dev.sarmy.infiniteskies.dungeons.mob.behavior.RiftMineBehavior;
 import dev.sarmy.infiniteskies.dungeons.listener.CustomMobSpawnListener;
+import dev.sarmy.infiniteskies.dungeons.listener.CustomMobCombatListener;
 import dev.sarmy.infiniteskies.dungeons.persistence.PersistentKeys;
 import dev.sarmy.infiniteskies.dungeons.scheduler.CentralTickService;
+import dev.sarmy.infiniteskies.dungeons.combat.ProjectileService;
 import org.bukkit.plugin.java.JavaPlugin;
 
 /**
@@ -39,18 +42,21 @@ public final class InfiniteSkiesDungeonsPlugin extends JavaPlugin {
     private PersistentKeys persistentKeys;
     private CustomMobEggService eggService;
     private CentralTickService tickService;
+    private ProjectileService projectileService;
 
     @Override
     public void onEnable() {
         saveDefaultConfig();
         persistentKeys = new PersistentKeys(this);
         mobManager = new CustomMobManager(persistentKeys);
+        projectileService = new ProjectileService();
         mobManager.register(new CrumblingHuskBehavior());
-        mobManager.register(new MossboundBruteBehavior().definition());
-        mobManager.register(new RiftArcherBehavior().definition());
-        mobManager.register(new StormCallerBehavior().definition());
+        mobManager.register(new MossboundBruteBehavior());
+        mobManager.register(new RiftArcherBehavior(projectileService));
+        mobManager.register(new RuinCrawlerBehavior());
+        mobManager.register(new StormCallerBehavior(projectileService));
         mobManager.register(new SkyReaverBehavior().definition());
-        mobManager.register(new RuinColossusBehavior().definition());
+        mobManager.register(new RuinColossusBehavior(projectileService));
         mobManager.register(new ObservatoryWatcherBehavior());
         mobManager.register(new VenomSpitterBehavior());
         mobManager.register(new GaleAcolyteBehavior());
@@ -70,10 +76,12 @@ public final class InfiniteSkiesDungeonsPlugin extends JavaPlugin {
         mobManager.register(new RiftMineBehavior());
         eggService = new CustomMobEggService(persistentKeys);
         tickService = new CentralTickService(this);
+        tickService.register(projectileService);
         tickService.register(mobManager::tick);
         tickService.start();
         getServer().getPluginManager().registerEvents(
                 new CustomMobSpawnListener(mobManager, eggService, persistentKeys), this);
+        getServer().getPluginManager().registerEvents(new CustomMobCombatListener(mobManager), this);
         IsDungeonCommand command = new IsDungeonCommand(mobManager, eggService);
         getCommand("isdungeon").setExecutor(command);
         getCommand("isdungeon").setTabCompleter(command);

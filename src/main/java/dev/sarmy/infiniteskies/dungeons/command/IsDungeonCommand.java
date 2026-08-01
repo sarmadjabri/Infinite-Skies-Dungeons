@@ -28,7 +28,13 @@ public final class IsDungeonCommand implements CommandExecutor, TabCompleter {
             sender.sendMessage(Component.text("You do not have permission to use this command."));
             return true;
         }
-        if (args.length < 2 || !args[0].equalsIgnoreCase("mob")) {
+        if (args.length == 0 || args[0].equalsIgnoreCase("help")) {
+            sender.sendMessage(Component.text("/isdungeon mob list"));
+            sender.sendMessage(Component.text("/isdungeon mob spawn <mob-id>"));
+            sender.sendMessage(Component.text("/isdungeon mob egg <mob-id>"));
+            return true;
+        }
+        if (!args[0].equalsIgnoreCase("mob")) {
             sender.sendMessage(Component.text("Usage: /isdungeon mob <list|spawn|egg> [mob-id]"));
             return true;
         }

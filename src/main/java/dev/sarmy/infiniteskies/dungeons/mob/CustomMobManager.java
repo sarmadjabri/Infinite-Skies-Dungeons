@@ -16,6 +16,8 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 import dev.sarmy.infiniteskies.dungeons.mob.behavior.MobBehavior;
+import dev.sarmy.infiniteskies.dungeons.combat.CombatTargets;
+import org.bukkit.entity.Mob;
 
 /** Spawns and identifies custom mobs through persistent entity data. */
 public final class CustomMobManager {
@@ -89,6 +91,9 @@ public final class CustomMobManager {
                 continue;
             }
             MobBehavior behavior = behaviors.get(instance.definition().id());
+            if (tick % 5 == 0 && living instanceof Mob mob) {
+                mob.setTarget(CombatTargets.nearestPlayer(living, 32.0));
+            }
             if (behavior != null) behavior.tick(living, tick);
         }
     }
