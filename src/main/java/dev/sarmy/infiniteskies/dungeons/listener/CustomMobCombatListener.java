@@ -77,6 +77,10 @@ public final class CustomMobCombatListener implements Listener {
     @EventHandler
     public void onDeath(EntityDeathEvent event) {
         var instance = mobs.instance(event.getEntity().getUniqueId());
+        if (instance.isPresent() && instance.get().definition().id().equals(MossboundBruteBehavior.ID)) {
+            event.getDrops().clear();
+            event.setDroppedExp(0);
+        }
         if (instance.isPresent() && instance.get().definition().id().equals(CrumblingHuskBehavior.ID)) {
             event.getEntity().getWorld().spawnParticle(Particle.BLOCK, event.getEntity().getLocation().add(0, .6, 0),
                     40, .45, .45, .45, Material.STONE.createBlockData());

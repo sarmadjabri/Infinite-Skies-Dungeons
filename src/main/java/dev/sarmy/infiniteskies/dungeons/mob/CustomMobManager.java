@@ -91,13 +91,14 @@ public final class CustomMobManager {
             var entity = Bukkit.getEntity(instance.entityId());
             if (!(entity instanceof LivingEntity living) || !living.isValid() || living.isDead()) {
                 instances.remove(instance.entityId());
+                healthBars.remove(instance.entityId());
                 continue;
             }
             MobBehavior behavior = behaviors.get(instance.definition().id());
             if (tick % 5 == 0 && living instanceof Mob mob) {
                 mob.setTarget(CombatTargets.nearestPlayer(living, 32.0));
-                healthBars.update(living, instance.definition());
             }
+            healthBars.update(living, instance.definition());
             if (behavior != null) behavior.tick(living, tick);
         }
     }

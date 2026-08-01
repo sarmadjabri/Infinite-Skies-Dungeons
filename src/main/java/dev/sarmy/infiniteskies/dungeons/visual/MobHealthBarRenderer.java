@@ -6,34 +6,30 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.TextDisplay;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 
-/** Renders one consistent vanilla nameplate health bar above every custom mob. */
+/** Renders a separate health bar above each mob's regular nameplate. */
 public final class MobHealthBarRenderer {
     private static final int SEGMENTS = 10;
-
+    private final Map<UUID, TextDisplay> displays = new HashMap<>();
     public void update(LivingEntity entity, CustomMobDefinition definition) {
-        double maximum = entity.getAttribute(Attribute.MAX_HEALTH) == null
-                ? definition.maximumHealth() : entity.getAttribute(Attribute.MAX_HEALTH).getValue();
+        double maximum = entity.getAttribute(Attribute.MAX_HEALTH) == null ? definition.maximumHealth() : entity.getAttribute(Attribute.MAX_HEALTH).getValue();
         double ratio = Math.clamp(entity.getHealth() / Math.max(1.0, maximum), 0.0, 1.0);
         int filled = (int) Math.ceil(ratio * SEGMENTS);
-        TextColor healthColor = colorFor(ratio);
-        Component bar = Component.text(" [", NamedTextColor.DARK_GRAY);
-        for (int index = 0; index < SEGMENTS; index++) {
-            bar = bar.append(Component.text("█", index < filled ? healthColor : NamedTextColor.DARK_GRAY));
-        }
-        entity.customName(Component.text(definition.displayName(), NamedTextColor.WHITE).append(bar).append(Component.text("]", NamedTextColor.DARK_GRAY)));
+        Component bar = Component.text("[", NamedTextColor.DARK_GRAY);
+        TextColor color = colorFor(ratio);
+        for (int index = 0; index < SEGMENTS; index++) bar = bar.append(Component.text("█", index < filled ? color : NamedTextColor.DARK_GRAY));
+        entity.customName(Component.text(definition.displayName(), NamedTextColor.WHITE));
         entity.setCustomNameVisible(true);
+        TextDisplay display = displays.get(entity.getUniqueId());
+        if (display == null || !display.isValid()) { display = entity.getWorld().spawn(entity.getLocation(), TextDisplay.class); display.setPersistent(false); displays.put(entity.getUniqueId(), display); }
+        display.teleport(entity.getLocation().add(0, entity.getHeight() + .45, 0));
+        display.text(bar.append(Component.text("]", NamedTextColor.DARK_GRAY)));
     }
-
-    private TextColor colorFor(double ratio) {
-        if (ratio >= .5) return gradient(NamedTextColor.YELLOW, NamedTextColor.GREEN, (ratio - .5) * 2);
-        return gradient(NamedTextColor.RED, NamedTextColor.YELLOW, ratio * 2);
-    }
-
-    private TextColor gradient(TextColor from, TextColor to, double progress) {
-        int red = (int) Math.round(from.red() + (to.red() - from.red()) * progress);
-        int green = (int) Math.round(from.green() + (to.green() - from.green()) * progress);
-        int blue = (int) Math.round(from.blue() + (to.blue() - from.blue()) * progress);
-        return TextColor.color(red, green, blue);
-    }
+    public void remove(UUID id) { TextDisplay display = displays.remove(id); if (display != null) display.remove(); }
+    private TextColor colorFor(double ratio) { return ratio >= .5 ? gradient(NamedTextColor.YELLOW, NamedTextColor.GREEN, (ratio-.5)*2) : gradient(NamedTextColor.RED, NamedTextColor.YELLOW, ratio*2); }
+    private TextColor gradient(TextColor from, TextColor to, double progress) { return TextColor.color((int)Math.round(from.red()+(to.red()-from.red())*progress),(int)Math.round(from.green()+(to.green()-from.green())*progress),(int)Math.round(from.blue()+(to.blue()-from.blue())*progress)); }
 }
