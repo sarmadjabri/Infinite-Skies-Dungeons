@@ -3,6 +3,7 @@ package dev.sarmy.infiniteskies.dungeons.mob;
 import dev.sarmy.infiniteskies.dungeons.persistence.PersistentKeys;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Location;
+import org.bukkit.Bukkit;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.persistence.PersistentDataType;
@@ -14,6 +15,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
+import dev.sarmy.infiniteskies.dungeons.mob.behavior.MobBehavior;
 
 /** Spawns and identifies custom mobs through persistent entity data. */
 public final class CustomMobManager {
@@ -22,6 +24,7 @@ public final class CustomMobManager {
     private final PersistentKeys keys;
     private final Map<String, CustomMobDefinition> definitions = new HashMap<>();
     private final Map<UUID, CustomMobInstance> instances = new HashMap<>();
+    private final Map<String, MobBehavior> behaviors = new HashMap<>();
 
     public CustomMobManager(PersistentKeys keys) {
         this.keys = keys;
@@ -29,6 +32,11 @@ public final class CustomMobManager {
 
     public void register(CustomMobDefinition definition) {
         definitions.put(definition.id(), definition);
+    }
+
+    public void register(MobBehavior behavior) {
+        behaviors.put(behavior.mobId(), behavior);
+        register(behavior.definition());
     }
 
     public Optional<CustomMobDefinition> definition(String id) {
@@ -54,6 +62,10 @@ public final class CustomMobManager {
         entity.setHealth(definition.maximumHealth());
         setAttribute(entity, Attribute.ATTACK_DAMAGE, definition.attackDamage());
         setAttribute(entity, Attribute.MOVEMENT_SPEED, definition.movementSpeed());
+        MobBehavior behavior = behaviors.get(definition.id());
+        if (behavior != null) {
+            behavior.applyEquipment(entity);
+        }
         entity.getPersistentDataContainer().set(keys.dataVersion(), PersistentDataType.INTEGER, DATA_VERSION);
         entity.getPersistentDataContainer().set(keys.mobId(), PersistentDataType.STRING, definition.id());
         UUID instanceId = UUID.randomUUID();
@@ -66,6 +78,19 @@ public final class CustomMobManager {
 
     public boolean isManaged(LivingEntity entity) {
         return entity.getPersistentDataContainer().has(keys.mobId(), PersistentDataType.STRING);
+    }
+
+    /** Updates active, loaded custom entities; unloaded entities keep only PDC identity. */
+    public void tick(long tick) {
+        for (CustomMobInstance instance : List.copyOf(instances.values())) {
+            var entity = Bukkit.getEntity(instance.entityId());
+            if (!(entity instanceof LivingEntity living) || !living.isValid() || living.isDead()) {
+                instances.remove(instance.entityId());
+                continue;
+            }
+            MobBehavior behavior = behaviors.get(instance.definition().id());
+            if (behavior != null) behavior.tick(living, tick);
+        }
     }
 
     private void setAttribute(LivingEntity entity, Attribute attribute, double value) {

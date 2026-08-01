@@ -10,6 +10,52 @@ weapons/equipment, and important behavioral constraints have been approved.
   drop chance. This rule applies to all current and future monster definitions
   unless the user explicitly overrides it.
 
+## Crumbling Husk
+
+- **Vanilla controller:** Husk.
+- **Weapon:** iron sword, used for normal melee attacks.
+- **Armor/equipment:** no armor.
+- **Health:** 50 HP.
+- **Melee damage:** 5 HP.
+- **Movement speed:** 5% slower than the normal Husk base speed.
+- **Attack cooldown:** 3 seconds (60 server ticks).
+
+## Ruin Crawler
+
+- **Vanilla controller:** Cave Spider.
+- **Health:** 5 HP.
+- **Movement speed:** normal Cave Spider base speed.
+- **Armor/equipment:** none.
+- **Leap cooldown:** 7 seconds (140 server ticks).
+- **On-hit effect:** poison lasting 5 seconds (100 server ticks).
+- **Direct-hit damage:** 4 HP.
+- **Poison strength:** I.
+- **Core behavior:** flanks players, makes one short leap, and briefly retreats
+  after attacking.
+
+## Dust Wretch
+
+- **Vanilla controller:** Zombie.
+- **Health:** 30 HP.
+- **Armor/equipment:** none; no weapon.
+- **Direct-hit damage:** 10 HP.
+- **Normal attack cooldown:** none specified.
+- **Lunge:** moves toward a player with a 50% speed increase for 1.5 seconds,
+  with a 15-second cooldown (300 server ticks).
+- **Normal movement speed:** 15% faster than the normal Zombie base speed.
+
+## Shard Slinger
+
+- **Vanilla controller:** Skeleton.
+- **Health:** 50 HP.
+- **Armor:** none.
+- **Weapon:** bow.
+- **Movement speed:** normal Skeleton base speed.
+- **Basic shot cooldown:** 5 seconds (100 server ticks).
+- **Basic-shot damage:** 5 HP.
+- **Heavy shot:** 15 HP damage with a 10-second cooldown (200 server ticks),
+  plus a 1-second (20-tick) sound and directional-particle warning.
+
 ## Mossbound Brute
 
 - **Vanilla controller:** Iron Golem.
