@@ -10,6 +10,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.SpawnerSpawnEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.world.ChunkLoadEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.persistence.PersistentDataType;
 
@@ -57,5 +58,12 @@ public final class CustomMobSpawnListener implements Listener {
         }
         event.setCancelled(true);
         mobManager.spawn(mobId, event.getLocation());
+    }
+
+    @EventHandler
+    public void onChunkLoad(ChunkLoadEvent event) {
+        for (var entity : event.getChunk().getEntities()) {
+            mobManager.restore(entity);
+        }
     }
 }

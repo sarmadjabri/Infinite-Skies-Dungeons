@@ -69,9 +69,18 @@ public final class MossboundBruteBehavior implements MobBehavior {
         Item projectile = golem.getWorld().dropItem(origin, ItemStack.of(Material.MOSS_BLOCK));
         projectile.setPickupDelay(Integer.MAX_VALUE);
         projectile.setGravity(false);
-        Location torso = target.getLocation().clone().add(0, 0.9, 0);
-        projectile.setVelocity(torso.toVector().subtract(origin.toVector()).normalize().multiply(1.05));
-        flyingBlocks.put(projectile.getUniqueId(), new FlyingBlock(projectile, golem.getUniqueId(), target.getUniqueId(), tick + PROJECTILE_LIFETIME_TICKS));
+        // This is deliberately a dumb projectile: its one and only trajectory is
+        // chosen from the brute's facing direction at launch.  It never adjusts
+        // toward a player, either before or during flight.
+        Vector direction = origin.getDirection().normalize();
+        direction.setY(direction.getY() - 0.10D);
+        direction.add(new Vector(
+                (Math.random() - 0.5D) * 0.08D,
+                (Math.random() - 0.5D) * 0.035D,
+                (Math.random() - 0.5D) * 0.08D
+        )).normalize();
+        projectile.setVelocity(direction.multiply(1.05D));
+        flyingBlocks.put(projectile.getUniqueId(), new FlyingBlock(projectile, golem.getUniqueId(), tick + PROJECTILE_LIFETIME_TICKS));
         golem.getWorld().playSound(origin, Sound.ENTITY_SNOWBALL_THROW, 1F, .65F);
     }
 
@@ -107,10 +116,10 @@ public final class MossboundBruteBehavior implements MobBehavior {
         if (rememberedId != null) {
             Player remembered = Bukkit.getPlayer(rememberedId);
             if (remembered != null && remembered.getWorld().equals(golem.getWorld())
-                    && !remembered.isDead() && !remembered.isInvulnerable()) return remembered;
+                    && !remembered.isDead()) return remembered;
         }
         return nearestPlayer(golem, 20.0);
     }
 
-    private record FlyingBlock(Item projectile, UUID ownerId, UUID targetId, long expireTick) { }
+    private record FlyingBlock(Item projectile, UUID ownerId, long expireTick) { }
 }

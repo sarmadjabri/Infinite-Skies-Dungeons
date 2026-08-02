@@ -7,6 +7,7 @@ import net.kyori.adventure.text.format.TextColor;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.TextDisplay;
+import org.bukkit.entity.Display;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -25,7 +26,7 @@ public final class MobHealthBarRenderer {
         entity.customName(Component.text(definition.displayName(), NamedTextColor.WHITE));
         entity.setCustomNameVisible(true);
         TextDisplay display = displays.get(entity.getUniqueId());
-        if (display == null || !display.isValid()) { display = entity.getWorld().spawn(entity.getLocation(), TextDisplay.class); display.setPersistent(false); displays.put(entity.getUniqueId(), display); }
+        if (display == null || !display.isValid()) { display = entity.getWorld().spawn(entity.getLocation(), TextDisplay.class); display.setPersistent(false); display.setBillboard(Display.Billboard.CENTER); displays.put(entity.getUniqueId(), display); }
         display.teleport(entity.getLocation().add(0, entity.getHeight() + .45, 0));
         display.text(bar.append(Component.text("]", NamedTextColor.DARK_GRAY)));
     }

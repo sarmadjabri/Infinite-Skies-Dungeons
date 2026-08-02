@@ -76,6 +76,7 @@ public final class InfiniteSkiesDungeonsPlugin extends JavaPlugin {
         mobManager.register(new FrostWispBehavior());
         mobManager.register(new RiftMineBehavior());
         mobManager.register(new ShardSlingerBehavior(projectileService));
+        mobManager.restoreLoadedEntities();
         eggService = new CustomMobEggService(persistentKeys);
         tickService = new CentralTickService(this);
         tickService.register(projectileService);

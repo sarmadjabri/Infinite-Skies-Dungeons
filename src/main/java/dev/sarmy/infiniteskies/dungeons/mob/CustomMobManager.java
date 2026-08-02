@@ -6,6 +6,7 @@ import org.bukkit.Location;
 import org.bukkit.Bukkit;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Entity;
 import org.bukkit.persistence.PersistentDataType;
 
 import java.util.Collection;
@@ -83,6 +84,35 @@ public final class CustomMobManager {
 
     public boolean isManaged(LivingEntity entity) {
         return entity.getPersistentDataContainer().has(keys.mobId(), PersistentDataType.STRING);
+    }
+
+    /**
+     * Reconnects a persisted custom mob to its live controller.  Custom-mob
+     * identity is stored on the entity, whereas the runtime instance map is not;
+     * this is therefore required after a restart or after its chunk is loaded.
+     */
+    public void restore(Entity entity) {
+        if (!(entity instanceof LivingEntity living) || instances.containsKey(living.getUniqueId())) return;
+        String mobId = living.getPersistentDataContainer().get(keys.mobId(), PersistentDataType.STRING);
+        CustomMobDefinition definition = definitions.get(mobId);
+        if (definition == null) return;
+
+        String persistedInstanceId = living.getPersistentDataContainer().get(keys.instanceId(), PersistentDataType.STRING);
+        UUID instanceId;
+        try {
+            instanceId = persistedInstanceId == null ? UUID.randomUUID() : UUID.fromString(persistedInstanceId);
+        } catch (IllegalArgumentException ignored) {
+            instanceId = UUID.randomUUID();
+        }
+        instances.put(living.getUniqueId(), new CustomMobInstance(living.getUniqueId(), instanceId, definition));
+        setAttribute(living, Attribute.KNOCKBACK_RESISTANCE, 1.0);
+        MobBehavior behavior = behaviors.get(mobId);
+        if (behavior != null) behavior.applyEquipment(living);
+    }
+
+    /** Restores all entities that are already loaded when this plugin enables. */
+    public void restoreLoadedEntities() {
+        Bukkit.getWorlds().forEach(world -> world.getEntities().forEach(this::restore));
     }
 
     /** Returns the authoritative persistent custom-mob identifier, including after a server restart. */

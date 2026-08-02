@@ -43,7 +43,7 @@ public final class CustomMobCombatListener implements Listener {
             nextMeleeHitMillis.put(attacker.getUniqueId(), now + CrumblingHuskBehavior.ATTACK_COOLDOWN_TICKS * 50L);
             return;
         }
-        if (instance.isPresent() && instance.get().definition().id().equals(MossboundBruteBehavior.ID)
+        if (mobs.mobId(attacker).map(MossboundBruteBehavior.ID::equals).orElse(false)
                 && !(event.getEntity() instanceof Player)) {
             event.setCancelled(true);
             return;
@@ -67,8 +67,7 @@ public final class CustomMobCombatListener implements Listener {
     @EventHandler(ignoreCancelled = true)
     public void onTarget(EntityTargetLivingEntityEvent event) {
         if (!(event.getEntity() instanceof LivingEntity attacker)) return;
-        var instance = mobs.instance(attacker.getUniqueId());
-        if (instance.isPresent() && instance.get().definition().id().equals(MossboundBruteBehavior.ID)
+        if (mobs.mobId(attacker).map(MossboundBruteBehavior.ID::equals).orElse(false)
                 && !(event.getTarget() instanceof Player)) {
             event.setCancelled(true);
         }

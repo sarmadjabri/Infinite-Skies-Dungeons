@@ -19,11 +19,15 @@ weapons/equipment, and important behavioral constraints have been approved.
 
 - **Vanilla controller:** Husk.
 - **Weapon:** iron sword, used for normal melee attacks.
-- **Armor/equipment:** no armor.
+- **Armor/equipment:** no visible armor. Hidden attributes: 14 armor and 6 armor
+  toughness.
 - **Health:** 50 HP.
 - **Melee damage:** 5 HP.
-- **Movement speed:** 5% slower than the normal Husk base speed.
+- **Movement speed:** 30% slower than the normal Husk base speed.
 - **Attack cooldown:** 3 seconds (60 server ticks).
+- **Lunge:** a movement-only quick burst toward a player from 3–12 blocks away;
+  it immediately returns to normal movement afterward. Cooldown: 15 seconds
+  (300 server ticks).
 
 ## Ruin Crawler
 
