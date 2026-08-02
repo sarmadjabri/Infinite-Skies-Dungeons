@@ -63,11 +63,8 @@ public final class CustomMobManager {
                 .spawnEntity(location, definition.entityType());
         entity.customName(Component.text(definition.displayName()));
         entity.setCustomNameVisible(true);
-        setAttribute(entity, Attribute.MAX_HEALTH, definition.maximumHealth());
+        applyDefinitionAttributes(entity, definition);
         entity.setHealth(definition.maximumHealth());
-        setAttribute(entity, Attribute.ATTACK_DAMAGE, definition.attackDamage());
-        setAttribute(entity, Attribute.MOVEMENT_SPEED, definition.movementSpeed());
-        setAttribute(entity, Attribute.KNOCKBACK_RESISTANCE, 1.0);
         MobBehavior behavior = behaviors.get(definition.id());
         if (behavior != null) {
             behavior.applyEquipment(entity);
@@ -105,7 +102,9 @@ public final class CustomMobManager {
             instanceId = UUID.randomUUID();
         }
         instances.put(living.getUniqueId(), new CustomMobInstance(living.getUniqueId(), instanceId, definition));
-        setAttribute(living, Attribute.KNOCKBACK_RESISTANCE, 1.0);
+        // Reapply definition attributes so updating a behavior takes effect on
+        // already-spawned mobs after the server is restarted.
+        applyDefinitionAttributes(living, definition);
         MobBehavior behavior = behaviors.get(mobId);
         if (behavior != null) behavior.applyEquipment(living);
     }
@@ -141,6 +140,16 @@ public final class CustomMobManager {
     private void setAttribute(LivingEntity entity, Attribute attribute, double value) {
         if (entity.getAttribute(attribute) != null) {
             entity.getAttribute(attribute).setBaseValue(value);
+        }
+    }
+
+    private void applyDefinitionAttributes(LivingEntity entity, CustomMobDefinition definition) {
+        setAttribute(entity, Attribute.MAX_HEALTH, definition.maximumHealth());
+        setAttribute(entity, Attribute.ATTACK_DAMAGE, definition.attackDamage());
+        setAttribute(entity, Attribute.MOVEMENT_SPEED, definition.movementSpeed());
+        setAttribute(entity, Attribute.KNOCKBACK_RESISTANCE, 1.0);
+        if (entity.getHealth() > definition.maximumHealth()) {
+            entity.setHealth(definition.maximumHealth());
         }
     }
 }

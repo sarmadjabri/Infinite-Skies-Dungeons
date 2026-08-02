@@ -34,8 +34,12 @@ public final class CustomMobCombatListener implements Listener {
     public void onDamage(EntityDamageByEntityEvent event) {
         if (!(event.getDamager() instanceof LivingEntity attacker)) return;
         var instance = mobs.instance(attacker.getUniqueId());
-        if (instance.isPresent() && instance.get().definition().id().equals(CrumblingHuskBehavior.ID)
-                && event.getEntity() instanceof Player) {
+        boolean crumblingHusk = mobs.mobId(attacker).map(CrumblingHuskBehavior.ID::equals).orElse(false);
+        if (crumblingHusk && !(event.getEntity() instanceof Player)) {
+            event.setCancelled(true);
+            return;
+        }
+        if (crumblingHusk && event.getEntity() instanceof Player) {
             long now = System.currentTimeMillis();
             long readyAt = nextMeleeHitMillis.getOrDefault(attacker.getUniqueId(), 0L);
             if (now < readyAt) { event.setCancelled(true); return; }
@@ -68,6 +72,10 @@ public final class CustomMobCombatListener implements Listener {
     public void onTarget(EntityTargetLivingEntityEvent event) {
         if (!(event.getEntity() instanceof LivingEntity attacker)) return;
         if (mobs.mobId(attacker).map(MossboundBruteBehavior.ID::equals).orElse(false)
+                && !(event.getTarget() instanceof Player)) {
+            event.setCancelled(true);
+        }
+        if (mobs.mobId(attacker).map(CrumblingHuskBehavior.ID::equals).orElse(false)
                 && !(event.getTarget() instanceof Player)) {
             event.setCancelled(true);
         }

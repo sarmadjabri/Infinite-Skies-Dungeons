@@ -58,13 +58,13 @@ public final class CrumblingHuskBehavior implements MobBehavior {
 
     @Override
     public void tick(LivingEntity entity, long tick) {
-        Player target = CombatTargets.nearestPlayer(entity, 18.0);
+        Player target = CombatTargets.nearestPlayer(entity, 20.0);
         if (target == null || nextLungeTick.getOrDefault(entity.getUniqueId(), 0L) > tick) return;
 
         double distanceSquared = entity.getLocation().distanceSquared(target.getLocation());
         // Do not waste the burst when already in sword range or when the player
         // is far outside the encounter.
-        if (distanceSquared < 9.0 || distanceSquared > 144.0) return;
+        if (distanceSquared < 6.25 || distanceSquared > 324.0) return;
 
         Vector burst = target.getLocation().toVector().subtract(entity.getLocation().toVector());
         burst.setY(0.0);

@@ -25,7 +25,7 @@ weapons/equipment, and important behavioral constraints have been approved.
 - **Melee damage:** 5 HP.
 - **Movement speed:** 30% slower than the normal Husk base speed.
 - **Attack cooldown:** 3 seconds (60 server ticks).
-- **Lunge:** a movement-only quick burst toward a player from 3–12 blocks away;
+- **Lunge:** a movement-only quick burst toward a player from 2.5–18 blocks away;
   it immediately returns to normal movement afterward. Cooldown: 15 seconds
   (300 server ticks).
 
