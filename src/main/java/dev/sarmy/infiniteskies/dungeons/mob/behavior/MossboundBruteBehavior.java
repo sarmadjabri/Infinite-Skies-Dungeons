@@ -26,7 +26,7 @@ public final class MossboundBruteBehavior implements MobBehavior {
     public static final String ID = "mossbound_brute";
     public static final double HEALTH = 100.0;
     public static final double MELEE_DAMAGE = 17.0;
-    public static final double BLOCK_THROW_DAMAGE = 22.0;
+    public static final double BLOCK_THROW_DAMAGE = 25.0;
     public static final int BLOCK_THROW_COOLDOWN_TICKS = 100;
     // Vanilla Iron Golem base movement speed is 0.25; this is 15% slower.
     private static final double MOVEMENT_SPEED = 0.15;
@@ -137,8 +137,11 @@ public final class MossboundBruteBehavior implements MobBehavior {
                 (Math.random() - 0.5D) * 0.012D,
                 (Math.random() - 0.5D) * 0.025D
         )).normalize();
-        projectile.setVelocity(direction.multiply(1.05D));
-        flyingBlocks.put(projectile.getUniqueId(), new FlyingBlock(projectile, golem.getUniqueId(), tick + PROJECTILE_LIFETIME_TICKS));
+        // Fast enough to be threatening, but the direction above is still locked
+        // once at release: this is never a homing projectile.
+        projectile.setVelocity(direction.multiply(2.10D));
+        flyingBlocks.put(projectile.getUniqueId(), new FlyingBlock(projectile, golem.getUniqueId(),
+                tick + PROJECTILE_LIFETIME_TICKS, origin.clone()));
         nextThrowTick.put(golem.getUniqueId(), tick + BLOCK_THROW_COOLDOWN_TICKS);
         golem.getWorld().playSound(origin, Sound.ENTITY_SNOWBALL_THROW, 1F, .65F);
     }
@@ -148,8 +151,9 @@ public final class MossboundBruteBehavior implements MobBehavior {
             Item projectile = block.projectile();
             if (!projectile.isValid() || tick >= block.expireTick() || !projectile.getLocation().getBlock().isPassable()) { projectile.remove(); flyingBlocks.remove(projectile.getUniqueId()); continue; }
             projectile.getWorld().spawnParticle(Particle.BLOCK, projectile.getLocation(), 80, .6, .6, .6, Material.MOSS_BLOCK.createBlockData());
+            Location currentLocation = projectile.getLocation();
             for (Player player : projectile.getWorld().getPlayers()) if (!player.isDead()
-                    && player.getBoundingBox().expand(.55).contains(projectile.getLocation().toVector())) {
+                    && intersectsPath(block.previousLocation(), currentLocation, player)) {
                 // Remove tracking first so no second tick can resolve this projectile again.
                 flyingBlocks.remove(projectile.getUniqueId());
                 var owner = Bukkit.getEntity(block.ownerId());
@@ -158,7 +162,22 @@ public final class MossboundBruteBehavior implements MobBehavior {
                 projectile.getWorld().spawnParticle(Particle.BLOCK, projectile.getLocation(), 20, .3, .3, .3, Material.MOSS_BLOCK.createBlockData());
                 projectile.remove(); break;
             }
+            if (projectile.isValid()) {
+                flyingBlocks.put(projectile.getUniqueId(), new FlyingBlock(projectile, block.ownerId(),
+                        block.expireTick(), currentLocation.clone()));
+            }
         }
+    }
+
+    /** Prevents the faster projectile from jumping through a player between ticks. */
+    private boolean intersectsPath(Location from, Location to, Player player) {
+        Vector movement = to.toVector().subtract(from.toVector());
+        int steps = Math.max(1, (int) Math.ceil(movement.length() / .12D));
+        for (int step = 0; step <= steps; step++) {
+            Vector point = from.toVector().add(movement.clone().multiply(step / (double) steps));
+            if (player.getBoundingBox().expand(.55D).contains(point)) return true;
+        }
+        return false;
     }
 
     private Player nearestPlayer(IronGolem golem, double range) {
@@ -180,6 +199,6 @@ public final class MossboundBruteBehavior implements MobBehavior {
         return nearestPlayer(golem, 48.0);
     }
 
-    private record FlyingBlock(Item projectile, UUID ownerId, long expireTick) { }
+    private record FlyingBlock(Item projectile, UUID ownerId, long expireTick, Location previousLocation) { }
     private record HeldBlock(Item block, long releaseTick) { }
 }
