@@ -14,6 +14,8 @@ weapons/equipment, and important behavioral constraints have been approved.
 
 - Every custom monster has full knockback resistance and must not be displaced
   by player attacks unless the user explicitly overrides this for a mob.
+- No custom monster may visibly wear armor. Any configured protection uses
+  hidden armor and armor-toughness attributes instead.
 
 ## Crumbling Husk
 

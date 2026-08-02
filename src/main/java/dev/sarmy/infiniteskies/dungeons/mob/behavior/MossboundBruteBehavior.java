@@ -68,6 +68,8 @@ public final class MossboundBruteBehavior implements MobBehavior {
 
     private void launchBlock(IronGolem golem, Player target, long tick) {
         Location origin = golem.getLocation().add(0, 1.8, 0);
+        // Client-side vanilla arm-swing animation, synchronized with release.
+        golem.swingMainHand();
         Item projectile = golem.getWorld().dropItem(origin, ItemStack.of(Material.MOSS_BLOCK));
         projectile.setPickupDelay(Integer.MAX_VALUE);
         projectile.setGravity(false);
