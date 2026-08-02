@@ -28,6 +28,8 @@ public final class MossboundBruteBehavior implements MobBehavior {
     public static final double MELEE_DAMAGE = 17.0;
     public static final double BLOCK_THROW_DAMAGE = 20.0;
     public static final int BLOCK_THROW_COOLDOWN_TICKS = 100;
+    // Vanilla Iron Golem base movement speed is 0.25; this is 20% slower.
+    private static final double MOVEMENT_SPEED = 0.20;
     private static final int PROJECTILE_LIFETIME_TICKS = 60;
     private final Map<UUID, Long> nextThrowTick = new HashMap<>();
     private final Map<UUID, Long> nextMeleeTick = new HashMap<>();
@@ -38,7 +40,7 @@ public final class MossboundBruteBehavior implements MobBehavior {
 
     @Override public CustomMobDefinition definition() {
         return new CustomMobDefinition(ID, "Mossbound Brute", EntityType.IRON_GOLEM,
-                MobRank.NORMAL, HEALTH, MELEE_DAMAGE, 0.125);
+                MobRank.NORMAL, HEALTH, MELEE_DAMAGE, MOVEMENT_SPEED);
     }
 
     @Override public void applyEquipment(LivingEntity entity) { entity.setAI(true); }
@@ -72,12 +74,17 @@ public final class MossboundBruteBehavior implements MobBehavior {
         // This is deliberately a dumb projectile: its one and only trajectory is
         // chosen from the brute's facing direction at launch.  It never adjusts
         // toward a player, either before or during flight.
-        Vector direction = origin.getDirection().normalize();
-        direction.setY(direction.getY() - 0.10D);
+        Location targetTorso = target.getLocation().clone().add(0, 0.9D, 0);
+        Vector direction = targetTorso.toVector().subtract(origin.toVector()).normalize();
+        // Turn before release so the model and its one-time trajectory agree.
+        Location facing = golem.getLocation().clone();
+        facing.setDirection(direction);
+        golem.setRotation(facing.getYaw(), facing.getPitch());
+        direction.setY(direction.getY() - 0.04D);
         direction.add(new Vector(
-                (Math.random() - 0.5D) * 0.08D,
-                (Math.random() - 0.5D) * 0.035D,
-                (Math.random() - 0.5D) * 0.08D
+                (Math.random() - 0.5D) * 0.025D,
+                (Math.random() - 0.5D) * 0.012D,
+                (Math.random() - 0.5D) * 0.025D
         )).normalize();
         projectile.setVelocity(direction.multiply(1.05D));
         flyingBlocks.put(projectile.getUniqueId(), new FlyingBlock(projectile, golem.getUniqueId(), tick + PROJECTILE_LIFETIME_TICKS));
@@ -118,7 +125,7 @@ public final class MossboundBruteBehavior implements MobBehavior {
             if (remembered != null && remembered.getWorld().equals(golem.getWorld())
                     && !remembered.isDead()) return remembered;
         }
-        return nearestPlayer(golem, 20.0);
+        return nearestPlayer(golem, 48.0);
     }
 
     private record FlyingBlock(Item projectile, UUID ownerId, long expireTick) { }

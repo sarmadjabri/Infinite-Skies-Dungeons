@@ -57,10 +57,15 @@ public final class CustomMobCombatListener implements Listener {
             event.setCancelled(true);
             return;
         }
-        if (instance.isPresent() && instance.get().definition().id().equals(RuinCrawlerBehavior.ID)
-                && event.getEntity() instanceof Player player) {
+        boolean ruinCrawler = mobs.mobId(attacker).map(RuinCrawlerBehavior.ID::equals).orElse(false);
+        if (ruinCrawler && !(event.getEntity() instanceof Player)) {
+            event.setCancelled(true);
+            return;
+        }
+        if (ruinCrawler && event.getEntity() instanceof Player player) {
             event.setDamage(4.0);
             player.addPotionEffect(new PotionEffect(PotionEffectType.POISON, 100, 0, true, true, true));
+            RuinCrawlerBehavior.beginRetreat(attacker);
             return;
         }
         if (instance.isPresent() && instance.get().definition().id().equals("ruin_colossus")
@@ -81,6 +86,10 @@ public final class CustomMobCombatListener implements Listener {
             event.setCancelled(true);
         }
         if (mobs.mobId(attacker).map(CrumblingHuskBehavior.ID::equals).orElse(false)
+                && !(event.getTarget() instanceof Player)) {
+            event.setCancelled(true);
+        }
+        if (mobs.mobId(attacker).map(RuinCrawlerBehavior.ID::equals).orElse(false)
                 && !(event.getTarget() instanceof Player)) {
             event.setCancelled(true);
         }

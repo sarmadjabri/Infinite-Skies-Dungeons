@@ -37,7 +37,8 @@ weapons/equipment, and important behavioral constraints have been approved.
 - **Vanilla controller:** Cave Spider.
 - **Health:** 5 HP.
 - **Movement speed:** normal Cave Spider base speed.
-- **Armor/equipment:** none.
+- **Armor/equipment:** no visible equipment. Hidden attributes: 14 armor and 6
+  armor toughness.
 - **Leap cooldown:** 7 seconds (140 server ticks).
 - **On-hit effect:** poison lasting 5 seconds (100 server ticks).
 - **Direct-hit damage:** 4 HP.
@@ -79,7 +80,9 @@ weapons/equipment, and important behavioral constraints have been approved.
 - **Health:** 40 HP.
 - **Projectile damage:** 10 HP.
 - **Projectile cooldown:** 5 seconds (100 server ticks).
-- **Movement speed:** 50% of the normal Iron Golem base speed.
+- **Projectile targeting:** acquires players from up to 48 blocks away and uses
+  a one-time, highly accurate torso aim at launch; the block never homes.
+- **Movement speed:** 20% slower than the normal Iron Golem base speed.
 - **Armor/equipment:** no armor.
 - **Melee damage:** 17 HP.
 

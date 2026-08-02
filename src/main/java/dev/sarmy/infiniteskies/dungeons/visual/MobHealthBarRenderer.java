@@ -12,7 +12,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-/** Renders a separate health bar above each mob's regular nameplate. */
+/** Renders a separate health bar above an otherwise nameless custom mob. */
 public final class MobHealthBarRenderer {
     private static final int SEGMENTS = 10;
     private final Map<UUID, TextDisplay> displays = new HashMap<>();
@@ -23,8 +23,8 @@ public final class MobHealthBarRenderer {
         Component bar = Component.text("[", NamedTextColor.DARK_GRAY);
         TextColor color = colorFor(ratio);
         for (int index = 0; index < SEGMENTS; index++) bar = bar.append(Component.text("█", index < filled ? color : NamedTextColor.DARK_GRAY));
-        entity.customName(Component.text(definition.displayName(), NamedTextColor.WHITE));
-        entity.setCustomNameVisible(true);
+        entity.customName(null);
+        entity.setCustomNameVisible(false);
         TextDisplay display = displays.get(entity.getUniqueId());
         if (display == null || !display.isValid()) { display = entity.getWorld().spawn(entity.getLocation(), TextDisplay.class); display.setPersistent(false); display.setBillboard(Display.Billboard.CENTER); displays.put(entity.getUniqueId(), display); }
         display.teleport(entity.getLocation().add(0, entity.getHeight() + .45, 0));

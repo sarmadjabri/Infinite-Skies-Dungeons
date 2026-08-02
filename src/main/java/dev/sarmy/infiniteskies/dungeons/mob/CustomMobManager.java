@@ -61,8 +61,8 @@ public final class CustomMobManager {
                 .orElseThrow(() -> new IllegalArgumentException("Unknown custom mob ID: " + id));
         LivingEntity entity = (LivingEntity) Objects.requireNonNull(location.getWorld(), "location world")
                 .spawnEntity(location, definition.entityType());
-        entity.customName(Component.text(definition.displayName()));
-        entity.setCustomNameVisible(true);
+        entity.customName(null);
+        entity.setCustomNameVisible(false);
         applyDefinitionAttributes(entity, definition);
         entity.setHealth(definition.maximumHealth());
         MobBehavior behavior = behaviors.get(definition.id());
