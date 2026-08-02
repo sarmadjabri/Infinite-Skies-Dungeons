@@ -130,6 +130,8 @@ public final class CustomMobManager {
                 instances.remove(instance.entityId());
                 healthBars.remove(instance.entityId());
                 visuals.remove(instance.entityId());
+                MobBehavior behavior = behaviors.get(instance.definition().id());
+                if (behavior != null) behavior.onControllerRemoved(instance.entityId());
                 continue;
             }
             MobBehavior behavior = behaviors.get(instance.definition().id());

@@ -159,3 +159,29 @@ weapons/equipment, and important behavioral constraints have been approved.
 
 - Deferred by user. Do not implement or configure this boss until a later
   design decision is supplied.
+
+## Approved secondary roster tuning
+
+The following values were proposed by the implementation and approved by the
+user. They apply in addition to each creature's original role description.
+
+| Mob | Health | Approved combat values |
+| --- | ---: | --- |
+| Observatory Watcher | 40 | 12 HP charged arrow; 1.5-second aim line; 8-second cooldown. |
+| Venom Spitter | 24 | 2 HP glob; Poison I for 2.5 seconds in a 5-second zone; 7-second cooldown. |
+| Gale Acolyte | 26 | 2 HP wind bolt and controlled knockback; 4-second bolt cooldown; 5-second reposition. |
+| Moss Priest | 35 | 12 HP ally heal; 2-second interruptible channel; 10-second cooldown. |
+| Void Mender | 32 | 2 HP bolt; Resistance I or Speed I ally buff for 4 seconds; 12-second cooldown. |
+| Grave Chanter | 40 | Summons two 6-HP Stone Scarabs after a 4-second ritual; 20-second cooldown. |
+| Ruin Standard-Bearer | 40 | 10-block Speed I aura for nearby monsters; 2 HP personal melee. |
+| Stone Binder | 34 | 1.5-second warning then 4-second Slow I circle; 10-second cooldown. |
+| Ceiling Stalker | 20 | 8 HP first ambush hit, then 3 HP melee; 2-second melee cooldown. |
+| Mimic Husk | 36 | 7 HP melee; 1-second warning; summons one weak Cave Spider once. |
+| Dust Phantom | 8 | 4 HP strikes; 12-second hard lifetime; at most two strikes, 3 seconds apart. |
+| Buried Guardian | 30 | 1.5-second emergence and nearby knockback, then 6 HP melee; 2.5-second melee cooldown. |
+| False Statue | 45 | 2-second cracking wake-up, then 8 HP melee; 2.5-second melee cooldown. |
+| Ember Wisp | 8 | 2 HP non-igniting fire zone; 3-second zone; 5-second cooldown. |
+| Storm Wisp | 10 | 5 HP lightning strike after a 1-second warning; 6-second cooldown. |
+| Frost Wisp | 10 | 1 HP orb; 4-second Slow I zone; 6-second cooldown. |
+| Rift Mine | 12 | 10 HP detonation and knockback; 1.5-second warning; triggers at 3.5 blocks. |
+| Dust Wretch | 30 | 10 HP base melee; 15% faster than Zombie; 50% speed lunge for 1.5 seconds every 15 seconds. |

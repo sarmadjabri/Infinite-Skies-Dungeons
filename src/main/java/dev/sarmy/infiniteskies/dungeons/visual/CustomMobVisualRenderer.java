@@ -42,6 +42,7 @@ public final class CustomMobVisualRenderer {
         controller.setInvisible(true);
         ItemDisplay visual = findOrCreate(controller, definition);
         if (visual == null) return;
+        visual.setInvisible(controller.getScoreboardTags().contains("isdungeon_hide_visual"));
 
         VisualProfile profile = VisualProfile.forMob(definition.id());
         Location location = controller.getLocation().clone().add(0.0, profile.yOffset(), 0.0);

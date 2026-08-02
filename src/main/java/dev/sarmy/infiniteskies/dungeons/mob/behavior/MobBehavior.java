@@ -2,6 +2,7 @@ package dev.sarmy.infiniteskies.dungeons.mob.behavior;
 
 import dev.sarmy.infiniteskies.dungeons.mob.CustomMobDefinition;
 import org.bukkit.entity.LivingEntity;
+import java.util.UUID;
 
 /**
  * Owns the creature-specific combat behavior for one custom mob type.
@@ -17,4 +18,7 @@ public interface MobBehavior {
 
     /** Executes this mob's stateful combat logic from the shared tick loop. */
     default void tick(LivingEntity entity, long tick) { }
+
+    /** Releases encounter-owned temporary entities when their controller dies or unloads. */
+    default void onControllerRemoved(UUID controllerId) { }
 }
