@@ -53,7 +53,7 @@ public final class InfiniteSkiesDungeonsPlugin extends JavaPlugin {
         projectileService = new ProjectileService();
         mobManager.register(new CrumblingHuskBehavior());
         mobManager.register(new MossboundBruteBehavior());
-        mobManager.register(new RiftArcherBehavior(projectileService));
+        mobManager.register(new RiftArcherBehavior());
         mobManager.register(new RuinCrawlerBehavior());
         mobManager.register(new StormCallerBehavior(projectileService));
         mobManager.register(new SkyReaverBehavior().definition());

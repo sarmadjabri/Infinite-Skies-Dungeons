@@ -5,6 +5,7 @@ import dev.sarmy.infiniteskies.dungeons.mob.behavior.SkyReaverBehavior;
 import dev.sarmy.infiniteskies.dungeons.mob.behavior.CrumblingHuskBehavior;
 import dev.sarmy.infiniteskies.dungeons.mob.behavior.RuinCrawlerBehavior;
 import dev.sarmy.infiniteskies.dungeons.mob.behavior.MossboundBruteBehavior;
+import dev.sarmy.infiniteskies.dungeons.mob.behavior.RiftArcherBehavior;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.Material;
@@ -36,6 +37,10 @@ public final class CustomMobCombatListener implements Listener {
         var instance = mobs.instance(attacker.getUniqueId());
         boolean crumblingHusk = mobs.mobId(attacker).map(CrumblingHuskBehavior.ID::equals).orElse(false);
         if (crumblingHusk && !(event.getEntity() instanceof Player)) {
+            event.setCancelled(true);
+            return;
+        }
+        if (crumblingHusk && CrumblingHuskBehavior.hasThrownSword(attacker)) {
             event.setCancelled(true);
             return;
         }
@@ -98,7 +103,8 @@ public final class CustomMobCombatListener implements Listener {
     @EventHandler(ignoreCancelled = true)
     public void onShootBow(EntityShootBowEvent event) {
         if (event.getEntity() instanceof LivingEntity entity
-                && mobs.instance(entity.getUniqueId()).map(instance -> instance.definition().id().equals("shard_slinger")).orElse(false)) {
+                && (mobs.mobId(entity).map("shard_slinger"::equals).orElse(false)
+                || mobs.mobId(entity).map(RiftArcherBehavior.ID::equals).orElse(false))) {
             event.setCancelled(true);
         }
     }

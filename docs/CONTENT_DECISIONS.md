@@ -22,12 +22,15 @@ weapons/equipment, and important behavioral constraints have been approved.
 - **Armor/equipment:** no visible armor. Hidden attributes: 14 armor and 6 armor
   toughness.
 - **Health:** 50 HP.
-- **Melee damage:** 5 HP.
+- **Melee damage:** 12 HP.
 - **Movement speed:** 30% slower than the normal Husk base speed.
 - **Attack cooldown:** 3 seconds (60 server ticks).
 - **Lunge:** a movement-only quick burst toward a player from 2.5–18 blocks away;
   it immediately returns to normal movement afterward. Cooldown: 15 seconds
   (300 server ticks).
+- **Desperation throw:** once, at 10% health or lower, it throws its iron sword
+  as a visible non-homing projectile for 12 HP damage. It is completely
+  immobile and unarmed afterward.
 
 ## Ruin Crawler
 
@@ -83,9 +86,10 @@ weapons/equipment, and important behavioral constraints have been approved.
 ## Rift Archer
 
 - **Vanilla controller:** Stray.
-- **Equipment:** full leather armor and a bow.
-- **Core ranged attack:** wind-charge shots fired while using the bow
-  presentation. These deal 5 HP direct damage and apply knockback.
+- **Equipment:** visible bow only; no visible armor. Hidden attributes: 14 armor
+  and 6 armor toughness.
+- **Core ranged attack:** actual native Breeze wind-charge projectiles fired
+  from the bow. Their direct damage and knockback match a vanilla Breeze.
 - **Health:** 40 HP.
 - **Shot cooldown:** 3 seconds (60 server ticks).
 - **Movement speed:** normal Stray base speed.
