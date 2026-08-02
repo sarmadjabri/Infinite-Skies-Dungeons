@@ -1,4 +1,4 @@
-# Mossbound Brute resource pack
+# Infinite Skies Dungeons resource pack
 
 This pack replaces the vanilla Iron Golem texture with the Mossbound Brute
 design: heavily overgrown mixed stone brick and cobblestone, vines, cracks,
@@ -14,5 +14,10 @@ Skeletons are globally retextured as Shard Slingers: dark ruined bones with
 small amethyst shard growths, worn wrappings, cracked surfaces, and violet eyes.
 
 It intentionally changes all Iron Golems, as approved for the initial visual
-stage. Install the generated ZIP in the Minecraft client resource-pack folder,
-or host it and configure the server resource-pack URL.
+stage. It also includes dungeon visuals for every other distinct vanilla base
+entity currently used by the encounter roster. Mobs that share a base entity
+(for example, the Moss Priest and Grave Chanter) also share that texture until
+a future custom-model/variant layer is introduced.
+
+Install the generated ZIP in the Minecraft client resource-pack folder, or
+host it and configure the server resource-pack URL.

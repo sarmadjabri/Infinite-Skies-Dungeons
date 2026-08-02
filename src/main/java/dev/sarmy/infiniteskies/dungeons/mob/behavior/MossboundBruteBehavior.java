@@ -139,7 +139,7 @@ public final class MossboundBruteBehavior implements MobBehavior {
         )).normalize();
         // Fast enough to be threatening, but the direction above is still locked
         // once at release: this is never a homing projectile.
-        projectile.setVelocity(direction.multiply(2.10D));
+        projectile.setVelocity(direction.multiply(1.80D));
         flyingBlocks.put(projectile.getUniqueId(), new FlyingBlock(projectile, golem.getUniqueId(),
                 tick + PROJECTILE_LIFETIME_TICKS, origin.clone()));
         nextThrowTick.put(golem.getUniqueId(), tick + BLOCK_THROW_COOLDOWN_TICKS);

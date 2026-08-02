@@ -19,6 +19,7 @@ import java.util.UUID;
 import dev.sarmy.infiniteskies.dungeons.mob.behavior.MobBehavior;
 import dev.sarmy.infiniteskies.dungeons.combat.CombatTargets;
 import dev.sarmy.infiniteskies.dungeons.visual.MobHealthBarRenderer;
+import dev.sarmy.infiniteskies.dungeons.visual.CustomMobVisualRenderer;
 import org.bukkit.entity.Mob;
 
 /** Spawns and identifies custom mobs through persistent entity data. */
@@ -30,9 +31,11 @@ public final class CustomMobManager {
     private final Map<UUID, CustomMobInstance> instances = new HashMap<>();
     private final Map<String, MobBehavior> behaviors = new HashMap<>();
     private final MobHealthBarRenderer healthBars = new MobHealthBarRenderer();
+    private final CustomMobVisualRenderer visuals;
 
     public CustomMobManager(PersistentKeys keys) {
         this.keys = keys;
+        this.visuals = new CustomMobVisualRenderer(keys);
     }
 
     public void register(CustomMobDefinition definition) {
@@ -126,13 +129,15 @@ public final class CustomMobManager {
             if (!(entity instanceof LivingEntity living) || !living.isValid() || living.isDead()) {
                 instances.remove(instance.entityId());
                 healthBars.remove(instance.entityId());
+                visuals.remove(instance.entityId());
                 continue;
             }
             MobBehavior behavior = behaviors.get(instance.definition().id());
             if (tick % 5 == 0 && living instanceof Mob mob) {
                 mob.setTarget(CombatTargets.nearestPlayer(living, 32.0));
             }
-            healthBars.update(living, instance.definition());
+            visuals.update(living, instance.definition());
+            healthBars.update(living, instance.definition(), visuals.visualHeight(instance.definition().id()));
             if (behavior != null) behavior.tick(living, tick);
         }
     }

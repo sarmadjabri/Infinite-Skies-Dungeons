@@ -11,6 +11,7 @@ public final class PersistentKeys {
     private final NamespacedKey mobRank;
     private final NamespacedKey spawnEggMobId;
     private final NamespacedKey spawnerMobId;
+    private final NamespacedKey visualController;
 
     public PersistentKeys(Plugin plugin) {
         dataVersion = new NamespacedKey(plugin, "data_version");
@@ -19,6 +20,7 @@ public final class PersistentKeys {
         mobRank = new NamespacedKey(plugin, "mob_rank");
         spawnEggMobId = new NamespacedKey(plugin, "spawn_egg_mob_id");
         spawnerMobId = new NamespacedKey(plugin, "spawner_mob_id");
+        visualController = new NamespacedKey(plugin, "visual_controller");
     }
 
     public NamespacedKey dataVersion() { return dataVersion; }
@@ -27,4 +29,5 @@ public final class PersistentKeys {
     public NamespacedKey mobRank() { return mobRank; }
     public NamespacedKey spawnEggMobId() { return spawnEggMobId; }
     public NamespacedKey spawnerMobId() { return spawnerMobId; }
+    public NamespacedKey visualController() { return visualController; }
 }
