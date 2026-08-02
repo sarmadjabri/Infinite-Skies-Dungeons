@@ -26,14 +26,18 @@ public final class MossboundBruteBehavior implements MobBehavior {
     public static final String ID = "mossbound_brute";
     public static final double HEALTH = 100.0;
     public static final double MELEE_DAMAGE = 17.0;
-    public static final double BLOCK_THROW_DAMAGE = 20.0;
+    public static final double BLOCK_THROW_DAMAGE = 22.0;
     public static final int BLOCK_THROW_COOLDOWN_TICKS = 100;
-    // Vanilla Iron Golem base movement speed is 0.25; this is 20% slower.
-    private static final double MOVEMENT_SPEED = 0.20;
+    // Vanilla Iron Golem base movement speed is 0.25; this is 15% slower.
+    private static final double MOVEMENT_SPEED = 0.15;
     private static final int PROJECTILE_LIFETIME_TICKS = 60;
+    // A short, visible lift before the release. This is an actual item entity so
+    // players see the moss block sitting above the Brute's hands/head.
+    private static final int THROW_WINDUP_TICKS = 14;
     private final Map<UUID, Long> nextThrowTick = new HashMap<>();
     private final Map<UUID, Long> nextMeleeTick = new HashMap<>();
     private final Map<UUID, UUID> lastPlayerTargets = new HashMap<>();
+    private final Map<UUID, HeldBlock> heldBlocks = new HashMap<>();
     private final Map<UUID, FlyingBlock> flyingBlocks = new HashMap<>();
 
     @Override public String mobId() { return ID; }
@@ -47,6 +51,7 @@ public final class MossboundBruteBehavior implements MobBehavior {
 
     @Override
     public void tick(LivingEntity entity, long tick) {
+        tickHeldBlocks(tick);
         tickFlyingBlocks(tick);
         if (!(entity instanceof IronGolem golem)) return;
         Player target = rememberedOrNearestPlayer(golem);
@@ -61,18 +66,62 @@ public final class MossboundBruteBehavior implements MobBehavior {
             golem.getWorld().playSound(golem.getLocation(), Sound.ENTITY_IRON_GOLEM_ATTACK, 1F, 1F);
         }
 
-        if (nextThrowTick.getOrDefault(golem.getUniqueId(), 0L) > tick) return;
-        nextThrowTick.put(golem.getUniqueId(), tick + BLOCK_THROW_COOLDOWN_TICKS);
-        launchBlock(golem, target, tick);
+        if (heldBlocks.containsKey(golem.getUniqueId())
+                || nextThrowTick.getOrDefault(golem.getUniqueId(), 0L) > tick) return;
+        beginThrowWindup(golem, tick);
     }
 
-    private void launchBlock(IronGolem golem, Player target, long tick) {
-        Location origin = golem.getLocation().add(0, 1.8, 0);
+    private void beginThrowWindup(IronGolem golem, long tick) {
+        Location heldLocation = heldBlockLocation(golem);
+        Item heldBlock = golem.getWorld().dropItem(heldLocation, ItemStack.of(Material.MOSS_BLOCK));
+        heldBlock.setPickupDelay(Integer.MAX_VALUE);
+        heldBlock.setCanMobPickup(false);
+        heldBlock.setInvulnerable(true);
+        heldBlock.setGravity(false);
+        heldBlock.setVelocity(new Vector());
+        heldBlocks.put(golem.getUniqueId(), new HeldBlock(heldBlock, tick + THROW_WINDUP_TICKS));
+        golem.getWorld().playSound(heldLocation, Sound.BLOCK_MOSS_PLACE, 1F, .75F);
+    }
+
+    private void tickHeldBlocks(long tick) {
+        for (Map.Entry<UUID, HeldBlock> entry : List.copyOf(heldBlocks.entrySet())) {
+            UUID golemId = entry.getKey();
+            HeldBlock held = entry.getValue();
+            Item block = held.block();
+            var entity = Bukkit.getEntity(golemId);
+            if (!(entity instanceof IronGolem golem) || !golem.isValid() || golem.isDead() || !block.isValid()) {
+                block.remove();
+                heldBlocks.remove(golemId);
+                continue;
+            }
+            Location heldLocation = heldBlockLocation(golem);
+            block.teleport(heldLocation);
+            block.getWorld().spawnParticle(Particle.BLOCK, heldLocation, 5, .16, .16, .16,
+                    Material.MOSS_BLOCK.createBlockData());
+            if (tick < held.releaseTick()) continue;
+
+            heldBlocks.remove(golemId);
+            Player target = rememberedOrNearestPlayer(golem);
+            if (target == null) {
+                block.remove();
+                continue;
+            }
+            launchBlock(golem, target, block, tick);
+        }
+    }
+
+    private Location heldBlockLocation(IronGolem golem) {
+        // Offset it slightly toward the direction the Brute faces so it reads as
+        // being held aloft, instead of floating directly through its head.
+        Vector forward = golem.getLocation().getDirection().setY(0.0);
+        if (forward.lengthSquared() > 0.0) forward.normalize().multiply(.28D);
+        return golem.getLocation().add(forward).add(0, 2.75D, 0);
+    }
+
+    private void launchBlock(IronGolem golem, Player target, Item projectile, long tick) {
+        Location origin = projectile.getLocation();
         // Client-side vanilla arm-swing animation, synchronized with release.
         golem.swingMainHand();
-        Item projectile = golem.getWorld().dropItem(origin, ItemStack.of(Material.MOSS_BLOCK));
-        projectile.setPickupDelay(Integer.MAX_VALUE);
-        projectile.setGravity(false);
         // This is deliberately a dumb projectile: its one and only trajectory is
         // chosen from the brute's facing direction at launch.  It never adjusts
         // toward a player, either before or during flight.
@@ -90,6 +139,7 @@ public final class MossboundBruteBehavior implements MobBehavior {
         )).normalize();
         projectile.setVelocity(direction.multiply(1.05D));
         flyingBlocks.put(projectile.getUniqueId(), new FlyingBlock(projectile, golem.getUniqueId(), tick + PROJECTILE_LIFETIME_TICKS));
+        nextThrowTick.put(golem.getUniqueId(), tick + BLOCK_THROW_COOLDOWN_TICKS);
         golem.getWorld().playSound(origin, Sound.ENTITY_SNOWBALL_THROW, 1F, .65F);
     }
 
@@ -131,4 +181,5 @@ public final class MossboundBruteBehavior implements MobBehavior {
     }
 
     private record FlyingBlock(Item projectile, UUID ownerId, long expireTick) { }
+    private record HeldBlock(Item block, long releaseTick) { }
 }
