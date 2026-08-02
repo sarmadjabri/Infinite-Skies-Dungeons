@@ -108,8 +108,8 @@ public final class CustomMobVisualRenderer {
     private record VisualProfile(float scale, double yOffset, double modelHeight) {
         static VisualProfile forMob(String id) {
             return switch (id) {
-                case "mossbound_brute" -> new VisualProfile(1.05F, 0.02D, 41D / 16D);
-                case "ruin_colossus" -> new VisualProfile(1.15F, 0.02D, 39D / 16D);
+                case "mossbound_brute" -> new VisualProfile(1.35F, 0.02D, 2.0D);
+                case "ruin_colossus" -> new VisualProfile(1.40F, 0.02D, 2.0D);
                 case "ruin_crawler", "venom_spitter", "ceiling_stalker" -> new VisualProfile(.90F, .02D, 12D / 16D);
                 case "sky_reaver", "dust_phantom" -> new VisualProfile(.95F, .55D, 24D / 16D);
                 case "storm_wisp", "frost_wisp", "gale_acolyte" -> new VisualProfile(.95F, .55D, 18D / 16D);

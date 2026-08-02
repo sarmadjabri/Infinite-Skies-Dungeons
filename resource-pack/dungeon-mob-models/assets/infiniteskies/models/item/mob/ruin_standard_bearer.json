@@ -1,7 +1,8 @@
 {
   "gui_light": "front",
   "textures": {
-    "layer0": "infiniteskies:mob/ruin_standard_bearer"
+    "layer0": "infiniteskies:item/mob/ruin_standard_bearer",
+    "particle": "#layer0"
   },
   "elements": [
     {

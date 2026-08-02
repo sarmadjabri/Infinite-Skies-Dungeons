@@ -56,9 +56,10 @@ def elements(family: str) -> list[dict[str, object]]:
     if family == "humanoid":
         return [cuboid([4, 0, 5], [7, 10, 11]), cuboid([9, 0, 5], [12, 10, 11]), cuboid([3, 10, 4], [13, 22, 12]), cuboid([0, 11, 5], [3, 21, 11]), cuboid([13, 11, 5], [16, 21, 11]), cuboid([3, 22, 3], [13, 32, 13])]
     if family == "golem":
-        return [cuboid([3, 0, 4], [7, 16, 12]), cuboid([9, 0, 4], [13, 16, 12]), cuboid([2, 16, 3], [14, 31, 13]), cuboid([-3, 17, 4], [2, 31, 12]), cuboid([14, 17, 4], [19, 31, 12]), cuboid([2, 31, 2], [14, 41, 14])]
+        # Minecraft 26.2 rejects element coordinates outside -16..32.
+        return [cuboid([3, 0, 4], [7, 13, 12]), cuboid([9, 0, 4], [13, 13, 12]), cuboid([2, 13, 3], [14, 23, 13]), cuboid([-3, 14, 4], [2, 27, 12]), cuboid([14, 14, 4], [19, 27, 12]), cuboid([2, 23, 2], [14, 32, 14])]
     if family == "warden":
-        return [cuboid([3, 0, 4], [7, 14, 12]), cuboid([9, 0, 4], [13, 14, 12]), cuboid([2, 14, 3], [14, 29, 13]), cuboid([0, 15, 4], [3, 28, 12]), cuboid([13, 15, 4], [16, 28, 12]), cuboid([2, 29, 2], [14, 39, 14])]
+        return [cuboid([3, 0, 4], [7, 12, 12]), cuboid([9, 0, 4], [13, 12, 12]), cuboid([2, 12, 3], [14, 23, 13]), cuboid([0, 13, 4], [3, 24, 12]), cuboid([13, 13, 4], [16, 24, 12]), cuboid([2, 23, 2], [14, 32, 14])]
     if family == "spider":
         return [cuboid([4, 5, 3], [12, 12, 13]), cuboid([3, 3, 0], [13, 10, 6]), cuboid([-3, 3, 3], [4, 5, 5]), cuboid([12, 3, 3], [19, 5, 5]), cuboid([-4, 3, 7], [4, 5, 9]), cuboid([12, 3, 7], [20, 5, 9]), cuboid([-3, 3, 11], [4, 5, 13]), cuboid([12, 3, 11], [19, 5, 13])]
     if family == "winged":
@@ -82,7 +83,7 @@ def texture(path: Path, low: tuple[int, int, int], high: tuple[int, int, int], a
 
 def write_model(mob_id: str, family: str) -> None:
     item_definition = {"model": {"type": "minecraft:model", "model": f"infiniteskies:item/mob/{mob_id}"}}
-    model = {"gui_light": "front", "textures": {"layer0": f"infiniteskies:mob/{mob_id}"}, "elements": elements(family)}
+    model = {"gui_light": "front", "textures": {"layer0": f"infiniteskies:item/mob/{mob_id}", "particle": "#layer0"}, "elements": elements(family)}
     item_path = OUT / "assets/infiniteskies/items/mob" / f"{mob_id}.json"
     model_path = OUT / "assets/infiniteskies/models/item/mob" / f"{mob_id}.json"
     item_path.parent.mkdir(parents=True, exist_ok=True)
@@ -108,11 +109,11 @@ def archive() -> None:
 
 def main() -> None:
     OUT.mkdir(parents=True, exist_ok=True)
-    (OUT / "pack.mcmeta").write_text(json.dumps({"pack": {"pack_format": 88, "description": "Infinite Skies Dungeons — Unique Mob Models"}}, indent=2) + "\n")
+    (OUT / "pack.mcmeta").write_text(json.dumps({"pack": {"min_format": [88, 0], "max_format": [88, 0], "description": "Infinite Skies Dungeons — Unique Mob Models"}}, indent=2) + "\n")
     (OUT / "README.md").write_text("# Infinite Skies unique mob models\n\nThis pack renders a unique custom model for each managed dungeon-mob ID. Vanilla entities are unchanged.\n")
     copy_global_armor()
     for mob_id, (family, low, high, accent) in MOBS.items():
-        texture_path = OUT / "assets/infiniteskies/textures/mob" / f"{mob_id}.png"
+        texture_path = OUT / "assets/infiniteskies/textures/item/mob" / f"{mob_id}.png"
         texture_path.parent.mkdir(parents=True, exist_ok=True)
         texture(texture_path, low, high, accent, sum(map(ord, mob_id)))
         write_model(mob_id, family)

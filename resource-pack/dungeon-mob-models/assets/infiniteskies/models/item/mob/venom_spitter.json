@@ -1,7 +1,8 @@
 {
   "gui_light": "front",
   "textures": {
-    "layer0": "infiniteskies:mob/venom_spitter"
+    "layer0": "infiniteskies:item/mob/venom_spitter",
+    "particle": "#layer0"
   },
   "elements": [
     {

@@ -1,7 +1,8 @@
 {
   "gui_light": "front",
   "textures": {
-    "layer0": "infiniteskies:mob/mossbound_brute"
+    "layer0": "infiniteskies:item/mob/mossbound_brute",
+    "particle": "#layer0"
   },
   "elements": [
     {
@@ -12,7 +13,7 @@
       ],
       "to": [
         7,
-        16,
+        13,
         12
       ],
       "faces": {
@@ -80,7 +81,7 @@
       ],
       "to": [
         13,
-        16,
+        13,
         12
       ],
       "faces": {
@@ -143,12 +144,12 @@
     {
       "from": [
         2,
-        16,
+        13,
         3
       ],
       "to": [
         14,
-        31,
+        23,
         13
       ],
       "faces": {
@@ -211,12 +212,12 @@
     {
       "from": [
         -3,
-        17,
+        14,
         4
       ],
       "to": [
         2,
-        31,
+        27,
         12
       ],
       "faces": {
@@ -279,12 +280,12 @@
     {
       "from": [
         14,
-        17,
+        14,
         4
       ],
       "to": [
         19,
-        31,
+        27,
         12
       ],
       "faces": {
@@ -347,12 +348,12 @@
     {
       "from": [
         2,
-        31,
+        23,
         2
       ],
       "to": [
         14,
-        41,
+        32,
         14
       ],
       "faces": {

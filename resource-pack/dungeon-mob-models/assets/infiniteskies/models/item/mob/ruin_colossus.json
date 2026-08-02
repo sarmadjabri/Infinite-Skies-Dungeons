@@ -1,7 +1,8 @@
 {
   "gui_light": "front",
   "textures": {
-    "layer0": "infiniteskies:mob/ruin_colossus"
+    "layer0": "infiniteskies:item/mob/ruin_colossus",
+    "particle": "#layer0"
   },
   "elements": [
     {
@@ -12,7 +13,7 @@
       ],
       "to": [
         7,
-        14,
+        12,
         12
       ],
       "faces": {
@@ -80,7 +81,7 @@
       ],
       "to": [
         13,
-        14,
+        12,
         12
       ],
       "faces": {
@@ -143,12 +144,12 @@
     {
       "from": [
         2,
-        14,
+        12,
         3
       ],
       "to": [
         14,
-        29,
+        23,
         13
       ],
       "faces": {
@@ -211,12 +212,12 @@
     {
       "from": [
         0,
-        15,
+        13,
         4
       ],
       "to": [
         3,
-        28,
+        24,
         12
       ],
       "faces": {
@@ -279,12 +280,12 @@
     {
       "from": [
         13,
-        15,
+        13,
         4
       ],
       "to": [
         16,
-        28,
+        24,
         12
       ],
       "faces": {
@@ -347,12 +348,12 @@
     {
       "from": [
         2,
-        29,
+        23,
         2
       ],
       "to": [
         14,
-        39,
+        32,
         14
       ],
       "faces": {

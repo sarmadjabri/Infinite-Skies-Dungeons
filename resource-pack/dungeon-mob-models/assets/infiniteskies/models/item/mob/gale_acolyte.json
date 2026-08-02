@@ -1,7 +1,8 @@
 {
   "gui_light": "front",
   "textures": {
-    "layer0": "infiniteskies:mob/gale_acolyte"
+    "layer0": "infiniteskies:item/mob/gale_acolyte",
+    "particle": "#layer0"
   },
   "elements": [
     {
