@@ -58,6 +58,14 @@ public final class CustomMobVisualRenderer {
         if (entity != null) entity.remove();
     }
 
+    /** Removes stale display entities from the experimental custom-model renderer. */
+    public void removePersistedDisplays() {
+        org.bukkit.Bukkit.getWorlds().forEach(world -> world.getEntitiesByClass(ItemDisplay.class).forEach(display -> {
+            if (display.getPersistentDataContainer().has(keys.visualController(), PersistentDataType.STRING)) display.remove();
+        }));
+        visualIds.clear();
+    }
+
     /** Height used to keep the shared health bar above the visual, not its hidden controller. */
     public double visualHeight(String mobId) {
         VisualProfile profile = VisualProfile.forMob(mobId);

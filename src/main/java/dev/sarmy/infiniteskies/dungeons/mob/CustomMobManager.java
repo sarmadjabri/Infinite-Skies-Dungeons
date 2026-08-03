@@ -114,6 +114,10 @@ public final class CustomMobManager {
 
     /** Restores all entities that are already loaded when this plugin enables. */
     public void restoreLoadedEntities() {
+        // Remove display entities created by the retired custom-model layer.
+        // Custom mobs deliberately use their real vanilla controller shape and
+        // hitbox; their visual differentiation is texture-only.
+        visuals.removePersistedDisplays();
         Bukkit.getWorlds().forEach(world -> world.getEntities().forEach(this::restore));
     }
 
@@ -138,8 +142,8 @@ public final class CustomMobManager {
             if (tick % 5 == 0 && living instanceof Mob mob) {
                 mob.setTarget(CombatTargets.nearestPlayer(living, 32.0));
             }
-            visuals.update(living, instance.definition());
-            healthBars.update(living, instance.definition(), visuals.visualHeight(instance.definition().id()));
+            living.setInvisible(false);
+            healthBars.update(living, instance.definition(), living.getHeight());
             if (behavior != null) behavior.tick(living, tick);
         }
     }

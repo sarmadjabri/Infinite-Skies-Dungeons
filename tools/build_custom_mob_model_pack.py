@@ -9,7 +9,6 @@ import zipfile
 from PIL import Image
 
 
-SOURCE_PACK = Path("resource-pack/mossbound-brute")
 OUT = Path("resource-pack/dungeon-mob-models")
 ARCHIVE = Path("dist/InfiniteSkies-Dungeon-Mob-Models.zip")
 
@@ -92,13 +91,6 @@ def write_model(mob_id: str, family: str) -> None:
     model_path.write_text(json.dumps(model, indent=2) + "\n")
 
 
-def copy_global_armor() -> None:
-    for source in SOURCE_PACK.glob("assets/minecraft/textures/entity/equipment/**/*.png"):
-        destination = OUT / source.relative_to(SOURCE_PACK)
-        destination.parent.mkdir(parents=True, exist_ok=True)
-        shutil.copy2(source, destination)
-
-
 def archive() -> None:
     ARCHIVE.parent.mkdir(parents=True, exist_ok=True)
     with zipfile.ZipFile(ARCHIVE, "w", compression=zipfile.ZIP_DEFLATED) as output:
@@ -109,9 +101,13 @@ def archive() -> None:
 
 def main() -> None:
     OUT.mkdir(parents=True, exist_ok=True)
+    # Rebuild from an empty generated-assets directory. This prevents stale
+    # paths from a prior pack version (or armor overrides) entering the ZIP.
+    generated_assets = OUT / "assets"
+    if generated_assets.exists():
+        shutil.rmtree(generated_assets)
     (OUT / "pack.mcmeta").write_text(json.dumps({"pack": {"min_format": [88, 0], "max_format": [88, 0], "description": "Infinite Skies Dungeons — Unique Mob Models"}}, indent=2) + "\n")
     (OUT / "README.md").write_text("# Infinite Skies unique mob models\n\nThis pack renders a unique custom model for each managed dungeon-mob ID. Vanilla entities are unchanged.\n")
-    copy_global_armor()
     for mob_id, (family, low, high, accent) in MOBS.items():
         texture_path = OUT / "assets/infiniteskies/textures/item/mob" / f"{mob_id}.png"
         texture_path.parent.mkdir(parents=True, exist_ok=True)
